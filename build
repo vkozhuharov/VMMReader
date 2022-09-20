@@ -1,0 +1,1 @@
+g++ `root-config --cflags` -I inc -I `root-config --incdir` src/*.cc VMMReader.cc -lpcap -fpermissive `root-config --libs`
