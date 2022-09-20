@@ -6,6 +6,8 @@
 #include "TH2F.h"
 
 #include "SRSData.hh"
+#define MAX_N_VMMS   16
+#define NCHANNELS_PER_VMM 64
 
 class Analyser {
 public:
@@ -28,9 +30,10 @@ public:
   TH2F *hEventChChargeOccupancy;
 
   TH1F *hCharge;
-  TH1F *hChCharge[64];
+  //  TH1F *hChCharge[MAX_N_VMMS*NCHANNELS_PER_VMM];
+  TH1F *hChCharge[384];
   
-  int chmap[2][64];
+  int chmap[MAX_N_VMMS][NCHANNELS_PER_VMM];
 
 };
 

@@ -92,14 +92,14 @@ void Analyser::init(){
 Analyser::Analyser (){
   fout = new TFile("output.root","RECREATE");
 
-  hChIndex = new TH1F("hCh","Channel index",128,0.0,128.0);
-  hChNumber = new TH1F("hChNumber","Channel number",128,0.0,128.0);
-  hNHits = new TH1F("hNHits","Number of hits",100,0.0,100.0);
-  hChOccupancy = new TH2F("hChOccupancy","Channel occupancy",8,0,8,6,0,6);
-  hEventChOccupancy = new TH2F("hEventChOccupancy","Channel occupancy",8,0,8,6,0,6);
+  hChIndex = new TH1F("hCh","Channel index",1024,0.0,1024.0);
+  hChNumber = new TH1F("hChNumber","Channel number",1024,0.0,1024.0);
+  hNHits = new TH1F("hNHits","Number of hits",1024,0.0,1024.0);
+  hChOccupancy = new TH2F("hChOccupancy","Channel occupancy",32,0,32,32,0,32);
+  hEventChOccupancy = new TH2F("hEventChOccupancy","Channel occupancy",32,0,32,32,0,32);
 
-  hChChargeOccupancy = new TH2F("hChChargeOccupancy","Cumulative charge",8,0,8,6,0,6);
-  hEventChChargeOccupancy = new TH2F("hEventChChargeOccupancy","Cumulative event charge",8,0,8,6,0,6);
+  hChChargeOccupancy = new TH2F("hChChargeOccupancy","Cumulative charge",32,0,32,32,0,32);
+  hEventChChargeOccupancy = new TH2F("hEventChChargeOccupancy","Cumulative event charge",32,0,32,32,0,32);
 
   hCharge = new TH1F("hCharge","Charge distribution",1000,0.0,1000.0);
   
@@ -136,7 +136,14 @@ void Analyser::process(SRSData *srs){
     
     std::cout << "VMM id: " << 1.*srs->hits[ih]->vmmid  << std::endl;
 
-    if (srs->hits[ih]->vmmid > 1 ) {
+    //    if (srs->hits[ih]->vmmid > 1 ) {
+    if (srs->hits[ih]->vmmid != 2  &&
+	srs->hits[ih]->vmmid != 3  &&
+	srs->hits[ih]->vmmid != 6  &&
+	srs->hits[ih]->vmmid != 7  &&
+	srs->hits[ih]->vmmid != 10 &&
+	srs->hits[ih]->vmmid != 11
+	) {
       std::cout << "Unknown VMM chip: " << 1.*srs->hits[ih]->vmmid  << std::endl;
       continue;
     }
