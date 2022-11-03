@@ -7,7 +7,7 @@
 #include <cinttypes>
 #include <cstring>
 #include <string>
-#include <pcap.h>
+#include "pcap.h"
 
 class PCAPNGReader {
 public:
