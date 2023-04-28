@@ -23,7 +23,7 @@ int fhitc = 0;
 int outc = 0;
 int begin_ih;
 int end_ih;
-float saturation = 1023;
+float saturation = 960;
 
 
 std::vector< int > VMMs { 1, 0, 3, 2, 9, 8, 11, 10 };
@@ -65,7 +65,9 @@ Analyser::load_table( const std::string &filename )
   std::map< std::pair< int, int >, std::pair< int, int > > table;
   std::ifstream fdata( filename.c_str() );
   while( fdata >> b >> c >> x >> y )
+  {
     table[{ b, c }] = { x, y }; // Read the table and store the values 
+  }
   
   return table;
 }
@@ -451,16 +453,20 @@ void Analyser::process( SRSData *srs )
 	  for( auto &EvHit: Hop_Event )
 	  {
 	    TotCharge_Hop += EvHit.charge;
-	    
-	    if( Hop_Event.size() > 20 && EvHit.charge >= saturation-1 )
+
+	    if( Hop_Event.size() > 20 )
 	    {
-	      saturated++;
-	      hSingleSatF->Fill( 100*EvHit.vmm + EvHit.channel );
-	      // hSingleSatF->Fill( 100*EvHit.vmm + EvHit.channel );
+	      if( EvHit.charge >= saturation-1 )
+	      {
+		saturated++;
+		hSingleSatF->Fill( 100*EvHit.vmm + EvHit.channel );
+		// hSingleSatF->Fill( 100*EvHit.vmm + EvHit.channel );
+	      }
 	    }
 	  }
 
-	  
+	  Pack_Buffer.TotCharge = TotCharge_Hop;
+
 	  if( saturated > 0 )
 	  {	
 	    hEventSaturationPNZ->Fill( saturated / ( 1.*Hop_Event.size() ) );
@@ -472,19 +478,18 @@ void Analyser::process( SRSData *srs )
 
 	  if( Hop_Event.size() > 20 )
 	    hTotalCharge_Sat->Fill( TotCharge_Hop );
-
-	  // Pack_Buffer.TotCharge = TotCharge_Hop;
-
 	  
+
+	  /*
 	  // Fill in the Total Charge Histograms
-	  if( TotCharge_Hop > 150 ) { hTotalCharge->Fill( TotCharge_Hop ); }
+	  if( TotCharge_Hop > 150 ) { hTotalCharge_Hop->Fill( TotCharge_Hop ); }
 	  
 	  for( int i = 0; i < 5; i++ )
 	  {
 	    if( TotCharge_Hop > 150 && Hop_Event.size() >= i+2 )
-	      hTotalChargeFilt[i]->Fill( TotCharge_Hop );
+	      hTotalChargeFilt_Hop[i]->Fill( TotCharge_Hop );
 	  }
-	  	  
+	  */	  
 
 	  /*
 	  // Saturation analysis
@@ -497,16 +502,15 @@ void Analyser::process( SRSData *srs )
 	    }
 	  }
 	  */
-	  
 
+	  
 	  // Packet Collector
-	  /*
 	  Pack_Buffer.NumHits = Hop_Event.size();
 	  Pack_Buffer.TotCharge = TotCharge_Hop;
 	  Pack_Buffer.Saturated = saturated;
 
 	  Packet.push_back( Pack_Buffer );
-	  */
+
 
 	  // Clear Event vector and start "collecting" the next event
 	  Hop_Event.clear();
@@ -542,7 +546,7 @@ void Analyser::process( SRSData *srs )
 
   // std::cout << "Packet Size [events]: " << Packet.size() << std::endl;
 
-  /*
+  
   if( Packet.size() <= 5 )
   {
     // std::cout << "Packet too small. Measured at: " << Packet.size() << std::endl;
@@ -566,7 +570,6 @@ void Analyser::process( SRSData *srs )
     
     Packet.clear();
   }
-  */
   
   // std::cout << "Initial Size: " << nhits << ", ";
   // std::cout << "Outliers: " << Outliers.size();
@@ -583,17 +586,19 @@ void Analyser::process( SRSData *srs )
 void Analyser::plotting()
 {
   char fname[64];
-
-  TCanvas ChargeCanvas = new TCanvas();
-  TCanvas MapCanvas = new TCanvas();
   
-  ChargeCanvas.cd();
-  hTotalCharge->Draw();
-  sprintf( fname, "TotalCharge.png" );
-  ChargeCanvas.Print( fname );
+  TCanvas c1;
+  c1.cd();
   
-  MapCanvas.cd();
-  hHitChargeOccupancy->Draw( "colz" );
-  sprintf( fname, "ChargeOccupancyMap.png" );
-  MapCanvas.Print( fname );
+  // hEventChOccupancy->Draw( "colz" );
+  sprintf( fname, "ocmap.png" );
+  c1.Print( fname );
+  
+  // hEventChChargeOccupancy->Draw( "colz" );
+  sprintf( fname, "cmap.png" );
+  c1.Print( fname );
+  
+  hCharge->Draw( "colz" );
+  sprintf( fname, "hist.png" );
+  c1.Print( fname );
 }

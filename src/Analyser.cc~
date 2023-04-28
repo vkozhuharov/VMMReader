@@ -590,10 +590,25 @@ void Analyser::plotting()
   ChargeCanvas.cd();
   hTotalCharge->Draw();
   sprintf( fname, "TotalCharge.png" );
-  ChargeCanvas.Print( fname );
+  MapCanvas.Print( fname );
+
+  /*
+  DisplayCanvas.cd( 2 );
+  hTotalChargeFilt[4]->Draw();
+  sprintf( fname, "FilteredCharge.png" );
+  DisplayCanvas.Print( fname );
+  */
   
   MapCanvas.cd();
   hHitChargeOccupancy->Draw( "colz" );
   sprintf( fname, "ChargeOccupancyMap.png" );
   MapCanvas.Print( fname );
+
+  /*
+  DisplayCanvas.cd( 4 );
+  hEventSaturationNZ->Draw();
+  
+  sprintf( fname, "DisplayCanvas.png" );
+  DisplayCanvas.Print( fname );
+  */
 }

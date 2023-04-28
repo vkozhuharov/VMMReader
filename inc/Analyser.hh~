@@ -45,17 +45,17 @@ public:
   TH2F *hSaturationMap;
   
   TH1F *hCharge;
-  TH1F *hTotalCharge;
+  // TH1F *hTotalCharge;
   // TH1F *hTotalCharge_Skip;
   // TH1F *hTotalCharge_Hop;
-  // TH1F *hTotalCharge_Hop_Test;
+  TH1F *hTotalCharge_Hop_Test;
   TH1F *hTotalChargeNS;
   TH1F *hTotalCharge_Sat;
   
-  TH1F *hTotalChargeFilt[5];
+  // TH1F *hTotalChargeFilt[5];
   // TH1F *hTotalChargeFilt_Skip[5];
   // TH1F *hTotalChargeFilt_Hop[5];
-  // TH1F *hTotalChargeFilt_Hop_Test[5];
+  TH1F *hTotalChargeFilt_Hop_Test[5];
   TH1F *hHitSplitCharge[5];
   
   // TH1F *hChCharge[64];
