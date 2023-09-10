@@ -3,29 +3,26 @@
 #include "Analyser.hh"
 #include <iostream>
 #include <string>
+#include <chrono>
 
 
 const int BUFSIZE = 100000;
 
-int main(int argc, char * argv[])
+int main( int argc, char * argv[] )
 {
   for ( int a = 1; a < argc; ++a )
   {
-    char buf[BUFSIZE];
-    std::string dir = "./Data/SPS_Nov2022/";
-    std::string filename = argv[a];
-    // std::cout<<filename<<std::endl<<(dir+filename)<<std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
     
-    PCAPNGReader *PCAPStream = new PCAPNGReader( dir + filename );
-    // PCAPNGReader *PCAPStream = new PCAPNGReader("Muon3VMM.pcapng");
+    char buf[BUFSIZE];
+    std::string filename = argv[a];
+    PCAPNGReader *PCAPStream = new PCAPNGReader( filename );
     SRSData *srs = new SRSData;
     Analyser *ana = new Analyser();
     
     
     if( PCAPStream->open() == 0 )
-    {
       std::cout << argv[a] << " opened successfully." << std::endl;
-    }
   
     else
     {
@@ -36,6 +33,9 @@ int main(int argc, char * argv[])
     // ana->ClearTestFile();
     
     int dataSize = 0;
+    int count = 1;
+    float ptimetot = 0;
+    float timetot = 0;
     while( ( dataSize = PCAPStream->read( buf, BUFSIZE ) ) != -1 )
     {
       // std::cout << "Found packet with size:   "<< dataSize << std::endl;
@@ -54,11 +54,27 @@ int main(int argc, char * argv[])
       */
       
       // std::cout << "Charge in channel: " << srs->hits[ih]->adc << std::endl;
-      
+
+      auto pstart = std::chrono::high_resolution_clock::now();
       ana->process( srs );
+      auto pstop = std::chrono::high_resolution_clock::now();
+      
+      auto ptime = std::chrono::duration_cast<std::chrono::microseconds>( pstop - pstart ).count();
+      timetot += ptime;
+
+      if( count % 1000 == 0 )
+      {
+	std::cout << "\r" << "Packets = " << count << ". Average packet analysis time = " << timetot/count << " us." << std::flush;
+      }
+      count++;
     }
-  
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto time = std::chrono::duration_cast<std::chrono::seconds>( stop - start ).count();
+    std::cout << std::endl << "Final packet = " << count << ". Full analysis time = " << time << " s." << std::endl << std::endl;
+
     // ana->plotting();
+    std::cout << std::endl;
     // PCAPStream->printStats();
     if( ana ) delete ana;
     if( srs ) delete srs;
