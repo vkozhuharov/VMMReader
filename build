@@ -1,0 +1,1 @@
+g++ -o ReadVMMData_exe `root-config --cflags` -I inc -I `root-config --incdir` src/Calibrator.cc src/Processer.cc src/Analyser.cc src/PCAPNGReader.cc src/SRSData.cc VMMReader.cc -lpcap -fpermissive -fconcepts `root-config --libs`
